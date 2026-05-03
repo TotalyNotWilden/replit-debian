@@ -22,12 +22,14 @@ RUN echo '#!/bin/sh\n\
 if [ -n "$ROOT_PASSWORD" ]; then\n\
   echo "root:$ROOT_PASSWORD" | chpasswd\n\
 fi\n\
-/usr/sbin/sshd\n\
+# Start SSH and log to a file we can check\n\
+/usr/sbin/sshd -E /var/log/sshd.log\n\
 if [ -n "$TUNNEL_TOKEN" ]; then\n\
   cloudflared tunnel --no-autoupdate run --token "$TUNNEL_TOKEN" &\n\
 fi\n\
 exec shellinaboxd -t -p 10000 --no-beep --disable-peer-check -s /:LOGIN' > /entrypoint.sh \
     && chmod +x /entrypoint.sh
+
 
 EXPOSE 10000 22
 
