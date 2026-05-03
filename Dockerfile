@@ -22,7 +22,6 @@ RUN echo '#!/bin/sh\n\
 if [ -n "$ROOT_PASSWORD" ]; then\n\
   echo "root:$ROOT_PASSWORD" | chpasswd\n\
 fi\n\
-# Start SSH and log to a file we can check\n\
 /usr/sbin/sshd -E /var/log/sshd.log\n\
 if [ -n "$TUNNEL_TOKEN" ]; then\n\
   cloudflared tunnel --no-autoupdate run --token "$TUNNEL_TOKEN" &\n\
