@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:bookworm-slim
 
 RUN printf '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && \
     chmod +x /usr/sbin/policy-rc.d
