@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /var/run/sshd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config && \
+    sed -i 's/^session    required     pam_loginuid.so/#session    required     pam_loginuid.so/g' /etc/pam.d/sshd
 
 RUN echo '#!/bin/sh\n\
 if [ -n "$ROOT_PASSWORD" ]; then\n\
@@ -28,7 +29,6 @@ if [ -n "$TUNNEL_TOKEN" ]; then\n\
 fi\n\
 exec shellinaboxd -t -p 10000 --no-beep --disable-peer-check -s /:LOGIN' > /entrypoint.sh \
     && chmod +x /entrypoint.sh
-
 
 EXPOSE 10000 22
 
