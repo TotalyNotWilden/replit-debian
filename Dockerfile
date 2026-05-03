@@ -1,11 +1,14 @@
+FROM debian:bookworm-slim
 
-FROM debian:trixie-slim
+RUN printf '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && \
+    chmod +x /usr/sbin/policy-rc.d
 
 RUN apt-get update && apt-get install -y \
     shellinabox \
     openssh-server \
     curl \
     vim \
+    procps \
     && curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb \
     && dpkg -i cloudflared.deb \
     && rm cloudflared.deb \
@@ -13,6 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir /var/run/sshd && \
     sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 
 RUN echo '#!/bin/sh\n\
 if [ -n "$ROOT_PASSWORD" ]; then\n\
@@ -26,8 +30,5 @@ exec shellinaboxd -t -p 10000 --no-beep --disable-peer-check -s /:LOGIN' > /entr
     && chmod +x /entrypoint.sh
 
 EXPOSE 10000 22
-
-ENTRYPOINT ["/entrypoint.sh"]
-
 
 ENTRYPOINT ["/entrypoint.sh"]
